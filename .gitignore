@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build Outputs
+backend/target/
+backend/maven/
+frontend/dist/
+frontend/dist-ssr/
+
+# Local Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.log
+
+# IDE & OS Meta
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
