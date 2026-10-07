@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/configurations")
-@CrossOrigin(origins = "*")
 public class ConfigurationController {
 
     private final ConfigurationService configurationService;

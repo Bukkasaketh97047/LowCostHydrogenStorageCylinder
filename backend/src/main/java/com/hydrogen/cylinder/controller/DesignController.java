@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/design")
-@CrossOrigin(origins = "*")
 public class DesignController {
 
     private final DesignService designService;
