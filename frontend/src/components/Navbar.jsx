@@ -32,8 +32,6 @@ export default function Navbar({ isDark, toggleTheme, activePage, setActivePage,
     else if (q.includes('hist') || q.includes('my calc')) setActivePage('history');
     else if (q.includes('prof') || q.includes('user')) setActivePage('profile');
     else if (q.includes('admin')) setActivePage('admin');
-    else if (q.includes('arch')) setActivePage('architecture');
-    else if (q.includes('method')) setActivePage('methodology');
     else setActivePage('dashboard');
   };
 

@@ -13,14 +13,15 @@
   }
 
   .light {
-    --bg-primary: #f1f5f9;
+    --bg-primary: #f8fafc;
     --bg-secondary: #ffffff;
-    --bg-card: rgba(255, 255, 255, 0.85);
-    --border-color: rgba(203, 213, 225, 0.8);
+    --bg-card: #ffffff;
+    --border-color: #cbd5e1;
     --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --accent-cyan: #0891b2;
+    --text-secondary: #334155;
+    --accent-cyan: #0284c7;
     --accent-blue: #2563eb;
+    color-scheme: light;
   }
 }
 
@@ -80,17 +81,203 @@ body {
   50% { opacity: 0.8; filter: blur(25px); }
 }
 
-@keyframes particleOrbit {
-  0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
-}
-
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
 .animate-pulse-glow {
   animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* ========================================================= */
+/* COMPREHENSIVE LIGHT MODE OVERRIDES & COLOR PALETTE        */
+/* ========================================================= */
+
+.light body,
+.light #root {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Containers and Cards */
+.light .glass-panel {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
+}
+
+.light .glass-card-hover:hover {
+  border-color: #0284c7 !important;
+  box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.12) !important;
+}
+
+/* Text Colors */
+.light .text-slate-100,
+.light .text-slate-200 {
+  color: #0f172a !important;
+}
+
+.light .text-slate-300 {
+  color: #334155 !important;
+}
+
+.light .text-slate-400 {
+  color: #475569 !important;
+}
+
+.light .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Accent Colors in Light Mode */
+.light .text-cyan-300,
+.light .text-cyan-400 {
+  color: #0284c7 !important;
+}
+
+.light .text-blue-300,
+.light .text-blue-400 {
+  color: #2563eb !important;
+}
+
+.light .text-emerald-300,
+.light .text-emerald-400 {
+  color: #059669 !important;
+}
+
+.light .text-amber-300,
+.light .text-amber-400 {
+  color: #d97706 !important;
+}
+
+.light .text-red-300,
+.light .text-red-400 {
+  color: #dc2626 !important;
+}
+
+.light .text-purple-300,
+.light .text-purple-400 {
+  color: #7c3aed !important;
+}
+
+/* Background Utility Classes in Light Mode */
+.light .bg-slate-950 {
+  background-color: #ffffff !important;
+}
+
+.light .bg-\[\#0b1329\] {
+  background-color: #f8fafc !important;
+}
+
+.light .bg-slate-900,
+.light .bg-slate-900\/90,
+.light .bg-slate-900\/80,
+.light .bg-slate-900\/60,
+.light .bg-slate-900\/40 {
+  background-color: #f1f5f9 !important;
+}
+
+.light .bg-slate-800,
+.light .bg-slate-800\/80,
+.light .bg-slate-800\/60,
+.light .bg-slate-800\/40 {
+  background-color: #e2e8f0 !important;
+}
+
+.light .bg-slate-950\/80,
+.light .bg-slate-950\/60 {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+}
+
+/* Soft Badge / Indicator Backgrounds */
+.light .bg-cyan-500\/10,
+.light .bg-cyan-500\/20,
+.light .bg-cyan-950\/20,
+.light .bg-cyan-950\/40 {
+  background-color: #e0f2fe !important;
+  border-color: #bae6fd !important;
+}
+
+.light .bg-emerald-500\/10,
+.light .bg-emerald-500\/20,
+.light .bg-emerald-950\/20,
+.light .bg-emerald-950\/40 {
+  background-color: #d1fae5 !important;
+  border-color: #a7f3d0 !important;
+}
+
+.light .bg-amber-500\/10,
+.light .bg-amber-500\/20,
+.light .bg-amber-900\/20,
+.light .bg-amber-950\/30 {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+}
+
+.light .bg-red-500\/10,
+.light .bg-red-500\/20,
+.light .bg-red-950\/20,
+.light .bg-red-950\/30 {
+  background-color: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+}
+
+.light .bg-purple-500\/10,
+.light .bg-purple-500\/20,
+.light .bg-purple-950\/20,
+.light .bg-purple-950\/30 {
+  background-color: #f3e8ff !important;
+  border-color: #e9d5ff !important;
+}
+
+/* Borders in Light Mode */
+.light .border-slate-800,
+.light .border-slate-800\/80,
+.light .border-slate-800\/60,
+.light .border-slate-700,
+.light .border-slate-700\/50,
+.light .border-slate-700\/60 {
+  border-color: #cbd5e1 !important;
+}
+
+/* Form Controls (Inputs, Selects) */
+.light input,
+.light select,
+.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.light input::placeholder,
+.light select::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Sidebar Specifics */
+.light aside {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light aside nav button:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+/* Navbar Specifics */
+.light header {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Recharts / SVG axis text in Light Mode */
+.light .recharts-cartesian-grid line {
+  stroke: #e2e8f0 !important;
+}
+
+.light .recharts-text {
+  fill: #475569 !important;
 }
 
 /* Print Styles for Engineering Report Export */

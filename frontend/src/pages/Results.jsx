@@ -51,6 +51,8 @@ export default function Results({ calculationResult, currentRequest, setActivePa
     optimizationPriority: 'Balanced'
   };
 
+  const recInfo = calculationResult.recommendationInfo;
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Header Bar */}
@@ -124,6 +126,82 @@ export default function Results({ calculationResult, currentRequest, setActivePa
             ${calculationResult.estimatedCostUsd.toFixed(2)}
           </div>
           <span className="text-[11px] text-slate-400 mt-1 block">Cost = M × costPerKg</span>
+        </div>
+      </div>
+
+      {/* PRELIMINARY DESIGN RECOMMENDATION SUMMARY CARD */}
+      <div className="glass-panel rounded-3xl p-6 sm:p-8 space-y-6 border border-cyan-500/30 bg-gradient-to-b from-slate-900/90 to-slate-950">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h3 className="text-sm font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-cyan-400" /> Preliminary Design Recommendation
+          </h3>
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+            Software Candidate Synthesis
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div className="bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+            <span className="text-slate-400 block font-medium">Recommended Material</span>
+            <span className="text-sm font-bold text-cyan-400 mt-1 block">
+              {recInfo?.recommendedMaterial || calculationResult.materialName}
+            </span>
+          </div>
+
+          <div className="bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+            <span className="text-slate-400 block font-medium">Recommended Configuration</span>
+            <span className="text-sm font-bold text-slate-100 mt-1 block">
+              {recInfo?.recommendedConfiguration || calculationResult.configurationName}
+              {recInfo?.isConceptualConfig && (
+                <span className="text-[10px] font-normal text-amber-400 block mt-0.5">
+                  (Conceptual candidate)
+                </span>
+              )}
+            </span>
+          </div>
+
+          <div className="bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+            <span className="text-slate-400 block font-medium">Optimization Priority</span>
+            <span className="text-sm font-bold text-slate-100 mt-1 block">
+              {recInfo?.optimizationPriority || req.optimizationPriority || 'Balanced'}
+            </span>
+          </div>
+        </div>
+
+        <div className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 text-xs text-slate-300 space-y-2">
+          <p className="font-semibold text-slate-200">Recommendation Rationale:</p>
+          <p className="text-[11px] text-slate-400 leading-relaxed">
+            {recInfo?.rationale || "Selected based on the entered storage capacity, design pressure, cylinder geometry, material properties, estimated mass, estimated cost and selected optimization priority."}
+          </p>
+          <p className="text-[10px] text-slate-500 italic pt-1">
+            * Preliminary engineering recommendation — software-based candidate recommendation for decision support. Not a certified pressure-vessel manufacturing specification.
+          </p>
+        </div>
+
+        {/* ALTERNATIVE CANDIDATES BREAKDOWN */}
+        <div className="pt-2 border-t border-slate-800/80 space-y-3">
+          <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">Candidate Evaluation &amp; Alternatives Breakdown</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
+              <span className="text-[10px] font-bold text-emerald-400 uppercase block mb-1">Recommended Candidate</span>
+              <span className="font-bold text-slate-100 block">{recInfo?.recommendedMaterial || calculationResult.materialName}</span>
+              <span className="text-[10px] text-slate-400 block mt-0.5">Primary numerical design selection</span>
+            </div>
+
+            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
+              <span className="text-[10px] font-bold text-cyan-400 uppercase block mb-1">Alternative Metallic Candidates</span>
+              <span className="font-bold text-slate-200 block">304 Stainless Steel / Aluminium 6061-T6</span>
+              <span className="text-[10px] text-slate-400 block mt-0.5">Evaluated metallic structural options</span>
+            </div>
+
+            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800 sm:col-span-2">
+              <span className="text-[10px] font-bold text-amber-400 uppercase block mb-1">Conceptual Alternatives</span>
+              <span className="font-bold text-amber-300 block">E-Glass/Epoxy | Carbon/Epoxy | Type III | Type IV</span>
+              <span className="text-[10px] text-amber-400/90 block mt-0.5">
+                Conceptual — detailed composite mechanics not implemented.
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 

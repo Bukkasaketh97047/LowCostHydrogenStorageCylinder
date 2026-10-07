@@ -369,6 +369,118 @@ export async function recommendMaterialApi(requestData) {
   }
 }
 
+export function evaluateRecommendation(requestData) {
+  const L_mm = parseFloat(requestData.cylinderLengthMm) || 0;
+  const maxL_mm = parseFloat(requestData.maxAllowableLengthMm) || 1500;
+  const D_mm = parseFloat(requestData.cylinderDiameterMm) || 0;
+  const maxD_mm = parseFloat(requestData.maxAllowableDiameterMm) || 400;
+
+  if (L_mm > maxL_mm) {
+    return {
+      isValid: false,
+      validationError: `Design cannot be evaluated because the entered cylinder length (${L_mm} mm) exceeds the maximum allowable length (${maxL_mm} mm).`
+    };
+  }
+
+  if (D_mm > maxD_mm) {
+    return {
+      isValid: false,
+      validationError: `Design cannot be evaluated because the entered cylinder diameter (${D_mm} mm) exceeds the maximum allowable diameter (${maxD_mm} mm).`
+    };
+  }
+
+  const priority = requestData.optimizationPriority || 'Balanced';
+  const P_MPa = parseFloat(requestData.designPressureMpa) || 35;
+  const materials = INITIAL_MATERIALS;
+
+  const allResults = materials.map(m => {
+    const res = runLocalCalculation({ ...requestData, materialName: m.name });
+    return { material: m, result: res };
+  });
+
+  const validCandidates = allResults.filter(item => item.result.isValid);
+  const invalidCandidates = allResults.filter(item => !item.result.isValid);
+
+  if (validCandidates.length === 0) {
+    return {
+      isValid: false,
+      validationError: `No candidate materials satisfied the stress safety requirement (SE - 0.6P > 0) for ${P_MPa} MPa pressure.`
+    };
+  }
+
+  let wC = 0.4, wW = 0.4, wT = 0.2;
+  if (priority === 'Cost') { wC = 0.7; wW = 0.2; wT = 0.1; }
+  else if (priority === 'Weight' || priority === 'Mass') { wC = 0.2; wW = 0.7; wT = 0.1; }
+
+  const maxCost = Math.max(...validCandidates.map(c => c.result.estimatedCostUsd)) || 1;
+  const maxMass = Math.max(...validCandidates.map(c => c.result.estimatedMassKg)) || 1;
+  const maxThickness = Math.max(...validCandidates.map(c => c.result.wallThicknessMm)) || 1;
+
+  const scores = validCandidates.map(c => {
+    const r = c.result;
+    const cn = r.estimatedCostUsd / maxCost;
+    const wn = r.estimatedMassKg / maxMass;
+    const tn = r.wallThicknessMm / maxThickness;
+    const score = (wC * cn) + (wW * wn) + (wT * tn);
+    return {
+      materialName: r.materialName,
+      materialType: c.material.type,
+      score,
+      normalizedCost: cn,
+      normalizedMass: wn,
+      normalizedThickness: tn,
+      wallThicknessMm: r.wallThicknessMm,
+      massKg: r.estimatedMassKg,
+      costUsd: r.estimatedCostUsd
+    };
+  });
+
+  scores.sort((a, b) => a.score - b.score);
+  const bestMaterial = scores[0].materialName;
+
+  let recommendedConfig = 'Type I';
+  let isConceptualConfig = false;
+
+  const isMetallic = bestMaterial.includes('Aluminium') || bestMaterial.includes('Steel');
+
+  if (P_MPa <= 35 && isMetallic && priority !== 'Weight') {
+    recommendedConfig = 'Type I';
+    isConceptualConfig = false;
+  } else if (bestMaterial.includes('Carbon') || priority === 'Weight') {
+    recommendedConfig = 'Type IV';
+    isConceptualConfig = true;
+  } else {
+    recommendedConfig = 'Type III';
+    isConceptualConfig = true;
+  }
+
+  const rationale = `Selected based on the entered storage capacity (${requestData.capacityLiters} L), design pressure (${P_MPa} MPa), cylinder geometry (D=${D_mm} mm, L=${L_mm} mm), material properties, estimated shell mass (${scores[0].massKg.toFixed(2)} kg), estimated material cost ($${scores[0].costUsd.toFixed(2)}) and selected '${priority}' optimization priority.`;
+
+  return {
+    isValid: true,
+    recommendedMaterial: bestMaterial,
+    recommendedConfiguration: recommendedConfig,
+    isConceptualConfig,
+    optimizationPriority: priority,
+    rationale,
+    allMaterialScores: scores,
+    invalidCandidates: invalidCandidates.map(c => ({
+      materialName: c.material.name,
+      reason: 'Not suitable for preliminary calculation (SE - 0.6P <= 0 condition failed)'
+    })),
+    alternativeMaterials: {
+      recommended: bestMaterial,
+      metallicAlternatives: scores.filter(s => s.materialName !== bestMaterial && !s.materialType.includes('Composite')),
+      conceptualAlternatives: [
+        { name: 'E-Glass/Epoxy', note: 'Conceptual — detailed composite mechanics not implemented.' },
+        { name: 'Carbon/Epoxy', note: 'Conceptual — detailed composite mechanics not implemented.' },
+        { name: 'Type III (Metal Liner + Composite Overwrap)', note: 'Conceptual — detailed composite mechanics not implemented.' },
+        { name: 'Type IV (Polymer Liner + Composite Overwrap)', note: 'Conceptual — detailed composite mechanics not implemented.' }
+      ]
+    }
+  };
+}
+
 export async function fetchHistoryApi() {
   try {
     const res = await fetch(`${API_BASE_URL}/history`, { headers: getAuthHeaders() });

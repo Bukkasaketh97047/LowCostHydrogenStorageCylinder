@@ -11,8 +11,6 @@ export default function Breadcrumb({ activePage, setActivePage }) {
     recommendation: 'Recommendation Engine',
     sensitivity: 'Sensitivity Analysis',
     history: 'Calculation History',
-    methodology: 'Calculation Methodology',
-    architecture: 'System Architecture',
     about: 'About & Project Scope'
   };
 

@@ -16,8 +16,6 @@ import Comparison from './pages/Comparison';
 import Recommendation from './pages/Recommendation';
 import Sensitivity from './pages/Sensitivity';
 import History from './pages/History';
-import Methodology from './pages/Methodology';
-import Architecture from './pages/Architecture';
 import About from './pages/About';
 
 // Authentication & Admin Pages
@@ -76,7 +74,7 @@ function MainAppContent() {
   };
 
   return (
-    <div className={`min-h-screen flex bg-[#0b1329] text-slate-100 font-sans transition-colors duration-300 ${isDark ? 'dark' : 'light'}`}>
+    <div className={`min-h-screen flex font-sans transition-colors duration-300 ${isDark ? 'dark bg-[#0b1329] text-slate-100' : 'light bg-slate-50 text-slate-900'}`}>
       {/* Sidebar */}
       <Sidebar
         activePage={activePage}
@@ -160,10 +158,6 @@ function MainAppContent() {
               setCurrentRequest={setCurrentRequest}
             />
           )}
-
-          {activePage === 'methodology' && <Methodology />}
-
-          {activePage === 'architecture' && <Architecture />}
 
           {activePage === 'about' && <About />}
         </main>

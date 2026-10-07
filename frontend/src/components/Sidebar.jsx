@@ -9,8 +9,6 @@ import {
   Award,
   Sliders,
   History,
-  Workflow,
-  Network,
   Info,
   ChevronRight,
   Flame,
@@ -30,8 +28,6 @@ export default function Sidebar({ activePage, setActivePage, isMobileOpen, setIs
     { id: 'recommendation', label: 'Recommendation Engine', icon: Award },
     { id: 'sensitivity', label: 'Sensitivity Analysis', icon: Sliders },
     { id: 'history', label: 'My Calculations', icon: History },
-    { id: 'methodology', label: 'Methodology', icon: Workflow },
-    { id: 'architecture', label: 'System Architecture', icon: Network },
     { id: 'about', label: 'About & Scope', icon: Info },
   ];
 
