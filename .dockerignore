@@ -1,0 +1,9 @@
+.git
+.gitignore
+.idea
+.vscode
+*.md
+frontend/node_modules
+frontend/dist
+backend/target
+maven
