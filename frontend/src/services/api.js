@@ -1,4 +1,8 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
+let envUrl = (import.meta.env.VITE_API_BASE_URL || '/api').trim();
+if (envUrl.startsWith('http') && !envUrl.endsWith('/api')) {
+  envUrl = envUrl.replace(/\/$/, '') + '/api';
+}
+const API_BASE_URL = envUrl.replace(/\/$/, '');
 
 async function parseApiResponse(res) {
   const text = await res.text();
