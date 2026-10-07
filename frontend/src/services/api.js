@@ -1,4 +1,23 @@
-const API_BASE_URL = '/api';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
+
+async function parseApiResponse(res) {
+  const text = await res.text();
+  let data = {};
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    if (!res.ok) {
+      throw new Error(`Server returned HTTP ${res.status}: Backend service is unavailable or API URL is misconfigured.`);
+    }
+    throw new Error('Received non-JSON response from server. Please check API URL configuration.');
+  }
+
+  if (!res.ok) {
+    throw new Error(data.message || `Request failed with status ${res.status}`);
+  }
+
+  return data;
+}
 
 export function getAuthHeaders() {
   const token = localStorage.getItem('hydro_token') || sessionStorage.getItem('hydro_token');
@@ -166,9 +185,7 @@ export async function registerApi(formData) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData)
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Registration failed');
-  return data;
+  return await parseApiResponse(res);
 }
 
 export async function loginApi(credentials) {
@@ -177,9 +194,7 @@ export async function loginApi(credentials) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials)
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Invalid email or password');
-  return data;
+  return await parseApiResponse(res);
 }
 
 export async function logoutApi() {
@@ -192,11 +207,15 @@ export async function logoutApi() {
 }
 
 export async function fetchCurrentUserApi() {
-  const res = await fetch(`${API_BASE_URL}/auth/me`, {
-    headers: getAuthHeaders()
-  });
-  if (!res.ok) return null;
-  return await res.json();
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/me`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) return null;
+    return await parseApiResponse(res);
+  } catch (e) {
+    return null;
+  }
 }
 
 export async function forgotPasswordApi(email) {
@@ -205,7 +224,7 @@ export async function forgotPasswordApi(email) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email })
   });
-  return await res.json();
+  return await parseApiResponse(res);
 }
 
 export async function resetPasswordApi(payload) {
@@ -214,18 +233,13 @@ export async function resetPasswordApi(payload) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Password reset failed');
-  return data;
+  return await parseApiResponse(res);
 }
-
-
 
 // Admin APIs
 export async function fetchAdminUsersApi() {
   const res = await fetch(`${API_BASE_URL}/admin/users`, { headers: getAuthHeaders() });
-  if (!res.ok) throw new Error('Failed to fetch admin users');
-  return await res.json();
+  return await parseApiResponse(res);
 }
 
 export async function toggleAdminUserStatusApi(id) {
@@ -233,7 +247,7 @@ export async function toggleAdminUserStatusApi(id) {
     method: 'PUT',
     headers: getAuthHeaders()
   });
-  return await res.json();
+  return await parseApiResponse(res);
 }
 
 export async function updateAdminUserRoleApi(id, role) {
@@ -242,13 +256,12 @@ export async function updateAdminUserRoleApi(id, role) {
     headers: getAuthHeaders(),
     body: JSON.stringify({ role })
   });
-  return await res.json();
+  return await parseApiResponse(res);
 }
 
 export async function fetchAdminStatsApi() {
   const res = await fetch(`${API_BASE_URL}/admin/stats`, { headers: getAuthHeaders() });
-  if (!res.ok) throw new Error('Failed to fetch admin stats');
-  return await res.json();
+  return await parseApiResponse(res);
 }
 
 // REST API calls for Engineering Design
